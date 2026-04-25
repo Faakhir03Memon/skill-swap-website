@@ -8,14 +8,26 @@ if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] != 'admin') {
     exit;
 }
 
+// Handle Approval action
+if (isset($_GET['approve_id'])) {
+    $approve_id = (int)$_GET['approve_id'];
+    $stmt = $pdo->prepare("UPDATE users SET is_approved = 1 WHERE id = ?");
+    $stmt->execute([$approve_id]);
+    header("Location: dashboard.php?msg=approved");
+    exit;
+}
+
 // Fetch Stats
 $total_users = $pdo->query("SELECT COUNT(*) FROM users WHERE role = 'student'")->fetchColumn();
 $total_skills = $pdo->query("SELECT COUNT(*) FROM skills")->fetchColumn();
 $total_exams = $pdo->query("SELECT COUNT(*) FROM exams")->fetchColumn();
 $total_certificates = $pdo->query("SELECT COUNT(*) FROM certificates")->fetchColumn();
 
+// Fetch Pending Payment Approvals
+$pending_users = $pdo->query("SELECT * FROM users WHERE is_approved = 0 AND transaction_id IS NOT NULL AND transaction_id != '' ORDER BY created_at DESC")->fetchAll();
+
 // Fetch Recent Users
-$recent_users = $pdo->query("SELECT * FROM users WHERE role = 'student' ORDER BY created_at DESC LIMIT 5")->fetchAll();
+$recent_users = $pdo->query("SELECT * FROM users WHERE role = 'student' AND is_approved = 1 ORDER BY created_at DESC LIMIT 5")->fetchAll();
 ?>
 <!DOCTYPE html>
 <html lang="en">
