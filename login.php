@@ -1,77 +1,95 @@
 <?php
 session_start();
 require_once 'includes/db.php';
-
 $error = '';
-
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $email = $_POST['email'];
-    $password = $_POST['password'];
-
-    // Only check users table for students
-    $stmtUser = $pdo->prepare("SELECT * FROM users WHERE email = ?");
-    $stmtUser->execute([$email]);
-    $user = $stmtUser->fetch();
-
-    if ($user && password_verify($password, $user['password'])) {
-        if ($user['is_approved'] == 0) {
-            $error = "Your account is pending approval. Please wait for admin confirmation.";
-        } else {
-            $_SESSION['user_id'] = $user['id'];
+    $stmt = $pdo->prepare("SELECT * FROM users WHERE email=? AND role='student'");
+    $stmt->execute([$_POST['email']]);
+    $user = $stmt->fetch();
+    if ($user && password_verify($_POST['password'], $user['password'])) {
+        if (!$user['is_approved']) { $error = "Your payment is pending admin approval."; }
+        else {
+            $_SESSION['user_id']   = $user['id'];
             $_SESSION['user_name'] = $user['name'];
-            $_SESSION['user_role'] = $user['role'];
-            header('Location: student/dashboard.php');
-            exit;
+            $_SESSION['user_role'] = 'student';
+            header('Location: student/dashboard.php'); exit;
         }
-    } else {
-        $error = "Invalid email or password.";
-    }
+    } else { $error = "Invalid email or password."; }
 }
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login | SkillSwap</title>
-    <link rel="stylesheet" href="assets/css/style.css">
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Login | SkillSwap</title>
+<link rel="stylesheet" href="assets/css/style.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+body { display:flex; align-items:center; justify-content:center; min-height:100vh; padding:24px; }
+.login-wrap { width:100%; max-width:420px; }
+.divider-line { display:flex; align-items:center; gap:16px; margin:20px 0; }
+.divider-line::before,.divider-line::after { content:''; flex:1; height:1px; background:rgba(59,130,246,0.15); }
+.divider-line span { font-size:12px; color:var(--text-muted); }
+</style>
 </head>
-<body style="display: flex; align-items: center; justify-content: center; min-height: 100vh;">
-    <div class="bg-blobs">
-        <div class="blob blob-1"></div>
-        <div class="blob blob-2"></div>
-        <div class="blob blob-3"></div>
-    </div>
+<body>
+<div class="bg-blobs"><div class="blob blob-1"></div><div class="blob blob-2"></div><div class="blob blob-3"></div></div>
 
-    <div class="glass reveal active" style="width: 100%; max-width: 420px; padding: 48px; position: relative; z-index: 1;">
-        <div style="text-align: center; margin-bottom: 40px;">
-            <a href="index.php" class="logo" style="text-decoration: none; font-size: 32px;">SKILLSWAP</a>
-            <p style="color: var(--text-muted); margin-top: 12px; font-weight: 300;">Welcome back! Please login to your account.</p>
+<div class="login-wrap">
+  <!-- Logo -->
+  <div style="text-align:center;margin-bottom:32px">
+    <div class="logo" style="font-size:28px;display:block;margin-bottom:8px">⚡ SKILLSWAP</div>
+    <p style="color:var(--text-muted);font-size:14px">Sign in to your student account</p>
+  </div>
+
+  <div class="card">
+    <h2 style="font-size:20px;font-weight:800;margin-bottom:24px">Welcome Back</h2>
+
+    <?php if($error): ?>
+    <div class="alert alert-danger" style="margin-bottom:20px"><i class="fas fa-exclamation-circle"></i> <?= $error ?></div>
+    <?php endif; ?>
+    <?php if(isset($_GET['registered'])): ?>
+    <div class="alert alert-success" style="margin-bottom:20px"><i class="fas fa-check-circle"></i> Account created! Awaiting admin approval.</div>
+    <?php endif; ?>
+
+    <form method="POST">
+      <div class="form-group">
+        <label>Email Address</label>
+        <div style="position:relative">
+          <i class="fas fa-envelope" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--text-muted);font-size:14px"></i>
+          <input type="email" name="email" class="form-control" placeholder="you@example.com" style="padding-left:42px" required value="<?= htmlspecialchars($_POST['email']??'') ?>">
         </div>
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <div style="position:relative">
+          <i class="fas fa-lock" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--text-muted);font-size:14px"></i>
+          <input type="password" name="password" id="pwd" class="form-control" placeholder="Enter your password" style="padding-left:42px;padding-right:42px" required>
+          <i class="fas fa-eye" id="togglePwd" style="position:absolute;right:14px;top:50%;transform:translateY(-50%);color:var(--text-muted);font-size:14px;cursor:pointer"></i>
+        </div>
+      </div>
+      <button type="submit" class="btn btn-primary" style="width:100%;padding:14px;font-size:15px;margin-top:8px">
+        <i class="fas fa-sign-in-alt"></i> Sign In
+      </button>
+    </form>
 
-        <?php if($error): ?>
-            <div style="background: rgba(244, 63, 94, 0.1); color: var(--accent); padding: 14px; border-radius: 12px; margin-bottom: 24px; text-align: center; font-size: 14px; border: 1px solid rgba(244, 63, 94, 0.2);">
-                <i class="fas fa-exclamation-circle" style="margin-right: 8px;"></i><?php echo $error; ?>
-            </div>
-        <?php endif; ?>
+    <div class="divider-line"><span>Don't have an account?</span></div>
+    <a href="register.php" class="btn btn-outline" style="width:100%;padding:13px"><i class="fas fa-user-plus"></i> Create Account</a>
+  </div>
 
-        <form method="POST">
-            <div class="form-group">
-                <label>Email Address</label>
-                <input type="email" name="email" class="form-control" placeholder="name@university.edu" required>
-            </div>
-            <div class="form-group">
-                <label>Password</label>
-                <input type="password" name="password" class="form-control" placeholder="••••••••" required>
-            </div>
-            <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 10px; padding: 14px;">Sign In</button>
-        </form>
+  <p style="text-align:center;margin-top:20px;font-size:13px;color:var(--text-muted)">
+    Admin? <a href="admin_login.php" style="color:var(--primary-light)">Login here</a>
+  </p>
+</div>
 
-        <p style="text-align: center; margin-top: 32px; color: var(--text-muted); font-size: 14px;">
-            Don't have an account yet? <a href="register.php" style="color: var(--primary-bright); text-decoration: none; font-weight: 600;">Create Account</a>
-        </p>
-    </div>
-
-    <script src="assets/js/animations.js"></script>
+<script>
+document.getElementById('togglePwd').addEventListener('click', function() {
+  const pwd = document.getElementById('pwd');
+  const isText = pwd.type === 'text';
+  pwd.type = isText ? 'password' : 'text';
+  this.className = isText ? 'fas fa-eye' : 'fas fa-eye-slash';
+  this.style.color = isText ? 'var(--text-muted)' : 'var(--primary-light)';
+});
+</script>
 </body>
 </html>
