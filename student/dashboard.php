@@ -109,6 +109,28 @@ if (!empty($wanted_ids)) {
                     <a href="profile.php" class="btn btn-outline" style="margin-top: 32px; width: 100%; font-size: 14px; border-radius: 12px;">Manage Skills</a>
                 </div>
 
+                <!-- Subscription Plan Card -->
+                <div class="card glass reveal" style="grid-column: span 1; transition-delay: 0.15s; background: linear-gradient(135deg, rgba(124, 58, 237, 0.1), rgba(0,0,0,0));">
+                    <h3 style="margin-bottom: 24px; font-size: 20px;"><i class="fas fa-crown" style="color: var(--primary-bright); margin-right: 10px;"></i> Subscription</h3>
+                    <div style="text-align: center; padding: 10px 0;">
+                        <div style="font-size: 32px; font-weight: 800; color: var(--primary-bright); margin-bottom: 5px;">
+                            <?php echo $user['subscription_plan']; ?>rs <span style="font-size: 14px; color: var(--text-muted); font-weight: 400;">/ mo</span>
+                        </div>
+                        <p style="font-weight: 600; font-size: 16px; color: var(--text-main); margin-bottom: 12px;">
+                            <?php 
+                                if($user['subscription_plan'] == 199) echo "Basic Plan";
+                                elseif($user['subscription_plan'] == 299) echo "Standard Plan";
+                                elseif($user['subscription_plan'] == 499) echo "Premium Plan";
+                                else echo "No Active Plan";
+                            ?>
+                        </p>
+                        <div style="background: rgba(255,255,255,0.05); padding: 12px; border-radius: 12px; border: 1px solid var(--glass-border);">
+                            <span style="color: var(--text-muted); font-size: 13px;">Daily Limit:</span>
+                            <span style="color: var(--secondary); font-weight: 700; margin-left: 5px;"><?php echo $user['lecture_limit']; ?> Lectures</span>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- AI Recommendations -->
                 <div class="card glass reveal" style="grid-column: span 2; transition-delay: 0.2s;">
                     <h3 style="margin-bottom: 24px; font-size: 20px;"><i class="fas fa-magic" style="color: var(--primary-bright); margin-right: 10px;"></i> AI-Matched Partners</h3>
