@@ -15,6 +15,8 @@ CREATE TABLE IF NOT EXISTS users (
     subscription_plan INT DEFAULT 0,
     lecture_limit INT DEFAULT 0,
     is_approved TINYINT(1) DEFAULT 0,
+    reset_token VARCHAR(255) NULL,
+    reset_token_expiry DATETIME NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
