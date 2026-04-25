@@ -26,9 +26,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             elseif ($subscription_plan == 299) $lecture_limit = 5;
             elseif ($subscription_plan == 499) $lecture_limit = 7;
 
-            $stmt = $pdo->prepare("INSERT INTO users (name, email, password, role, subscription_plan, lecture_limit, is_approved) VALUES (?, ?, ?, 'student', ?, ?, 0)");
+            $stmt = $pdo->prepare("INSERT INTO users (name, email, password, role, subscription_plan, lecture_limit, is_approved, payment_status) VALUES (?, ?, ?, 'student', ?, ?, 0, 'pending')");
             if ($stmt->execute([$name, $email, $hashed_pass, $subscription_plan, $lecture_limit])) {
-                $success = "Registration successful! Your account is pending admin approval after payment.";
+                $new_user_id = $pdo->lastInsertId();
+                // Redirect to payment page
+                header("Location: payment.php?uid=" . $new_user_id . "&plan=" . $subscription_plan);
+                exit;
             } else {
                 $error = "Something went wrong. Please try again.";
             }
