@@ -217,33 +217,45 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 <label class="method-card glass" style="display:flex;align-items:center;gap:10px;padding:11px 14px;border-radius:12px;border:1px solid rgba(255,255,255,0.07);">
                     <input type="radio" name="payment_method" value="JazzCash" required style="accent-color:#e6474d;width:15px;height:15px;" checked onchange="updateAccountNum()">
-                    <div>
-                        <div style="font-weight:700;font-size:13px;color:#e6474d;"><i class="fas fa-mobile-alt" style="margin-right:5px;"></i>JazzCash</div>
-                        <div style="font-size:11px;color:var(--text-muted);">Mobile Account</div>
+                    <div style="display:flex; align-items:center; gap:8px;">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/JazzCash_logo.svg/512px-JazzCash_logo.svg.png" alt="JazzCash" style="width:28px; height:28px; object-fit:contain; background:white; padding:3px; border-radius:6px;">
+                        <div>
+                            <div style="font-weight:700;font-size:13px;color:#e6474d;">JazzCash</div>
+                            <div style="font-size:11px;color:var(--text-muted);">Mobile Account</div>
+                        </div>
                     </div>
                 </label>
 
                 <label class="method-card glass" style="display:flex;align-items:center;gap:10px;padding:11px 14px;border-radius:12px;border:1px solid rgba(255,255,255,0.07);">
                     <input type="radio" name="payment_method" value="EasyPaisa" style="accent-color:#44b549;width:15px;height:15px;" onchange="updateAccountNum()">
-                    <div>
-                        <div style="font-weight:700;font-size:13px;color:#44b549;"><i class="fas fa-mobile-alt" style="margin-right:5px;"></i>EasyPaisa</div>
-                        <div style="font-size:11px;color:var(--text-muted);">Mobile Account</div>
+                    <div style="display:flex; align-items:center; gap:8px;">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Easypaisa_logo.svg/512px-Easypaisa_logo.svg.png" alt="EasyPaisa" style="width:28px; height:28px; object-fit:contain; background:white; padding:3px; border-radius:6px;">
+                        <div>
+                            <div style="font-weight:700;font-size:13px;color:#44b549;">EasyPaisa</div>
+                            <div style="font-size:11px;color:var(--text-muted);">Mobile Account</div>
+                        </div>
                     </div>
                 </label>
 
                 <label class="method-card glass" style="display:flex;align-items:center;gap:10px;padding:11px 14px;border-radius:12px;border:1px solid rgba(255,255,255,0.07);">
-                    <input type="radio" name="payment_method" value="Bank Transfer" style="accent-color:var(--primary-bright);width:15px;height:15px;" onchange="updateAccountNum()">
-                    <div>
-                        <div style="font-weight:700;font-size:13px;"><i class="fas fa-university" style="margin-right:5px;"></i>Bank Transfer</div>
-                        <div style="font-size:11px;color:var(--text-muted);">Direct Transfer</div>
+                    <input type="radio" name="payment_method" value="Meezan Bank" style="accent-color:var(--primary-bright);width:15px;height:15px;" onchange="updateAccountNum()">
+                    <div style="display:flex; align-items:center; gap:8px;">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Meezan_Bank_Logo.svg/512px-Meezan_Bank_Logo.svg.png" alt="Meezan Bank" style="width:28px; height:28px; object-fit:contain; background:white; padding:3px; border-radius:6px;">
+                        <div>
+                            <div style="font-weight:700;font-size:13px;color:#009e49;">Meezan Bank</div>
+                            <div style="font-size:11px;color:var(--text-muted);">Direct Transfer</div>
+                        </div>
                     </div>
                 </label>
 
                 <label class="method-card glass" style="display:flex;align-items:center;gap:10px;padding:11px 14px;border-radius:12px;border:1px solid rgba(255,255,255,0.07);">
                     <input type="radio" name="payment_method" value="NayaPay" style="accent-color:#ff6b00;width:15px;height:15px;" onchange="updateAccountNum()">
-                    <div>
-                        <div style="font-weight:700;font-size:13px;color:#ff6b00;"><i class="fas fa-wallet" style="margin-right:5px;"></i>NayaPay</div>
-                        <div style="font-size:11px;color:var(--text-muted);">Digital Wallet</div>
+                    <div style="display:flex; align-items:center; gap:8px;">
+                        <img src="https://upload.wikimedia.org/wikipedia/en/thumb/4/4c/NayaPay_Logo.svg/512px-NayaPay_Logo.svg.png" alt="NayaPay" style="width:28px; height:28px; object-fit:contain; background:white; padding:3px; border-radius:6px;" onerror="this.style.display='none'">
+                        <div>
+                            <div style="font-weight:700;font-size:13px;color:#ff6b00;">NayaPay</div>
+                            <div style="font-size:11px;color:var(--text-muted);">Digital Wallet</div>
+                        </div>
                     </div>
                 </label>
 
@@ -318,7 +330,7 @@ function updateAccountNum() {
     const selectedMethod = document.querySelector('input[name="payment_method"]:checked').value;
     const accNumElement = document.getElementById('acc-num');
     
-    if (selectedMethod === 'Bank Transfer') {
+    if (selectedMethod === 'Meezan Bank') {
         accNumElement.innerText = 'Coming Soon';
     } else {
         accNumElement.innerText = '03708433612';
