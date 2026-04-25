@@ -19,11 +19,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if ($user) {
         $token = bin2hex(random_bytes(32));
-        $expiry = date('Y-m-d H:i:s', time() + 3600); // 1 hour expiry
         
-        $pdo->prepare("UPDATE users SET reset_token=?, reset_token_expiry=? WHERE id=?")->execute([$token, $expiry, $user['id']]);
+        // Use MySQL's NOW() to prevent PHP vs Database timezone mismatches that instantly expire tokens
+        $pdo->prepare("UPDATE users SET reset_token=?, reset_token_expiry=DATE_ADD(NOW(), INTERVAL 1 HOUR) WHERE id=?")->execute([$token, $user['id']]);
         
-        $reset_link = "http://" . $_SERVER['HTTP_HOST'] . dirname($_SERVER['PHP_SELF']) . "/reset_password.php?token=" . $token;
+        // Fix Windows path issues (\ instead of /) that break clickable email links
+        $base_dir = str_replace('\\', '/', dirname($_SERVER['PHP_SELF']));
+        $reset_link = "http://" . $_SERVER['HTTP_HOST'] . $base_dir . "/reset_password.php?token=" . $token;
         
         // Try to send via PHPMailer script
         if (sendResetEmail($email, $reset_link)) {
