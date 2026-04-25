@@ -8,25 +8,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $email = $_POST['email'];
     $password = $_POST['password'];
 
-    // First check admin table
-    $admin = null;
-    try {
-        $stmtAdmin = $pdo->prepare("SELECT * FROM admin WHERE email = ?");
-        $stmtAdmin->execute([$email]);
-        $admin = $stmtAdmin->fetch();
-    } catch (PDOException $e) {
-        // Table probably doesn't exist yet, ignore and fallback to users table
-    }
-
-    if ($admin && password_verify($password, $admin['password'])) {
-        $_SESSION['user_id'] = $admin['id'];
-        $_SESSION['user_name'] = $admin['name'];
-        $_SESSION['user_role'] = $admin['role'];
-        header('Location: admin/dashboard.php');
-        exit;
-    }
-
-    // If not admin, check users table for students
+    // Only check users table for students
     $stmtUser = $pdo->prepare("SELECT * FROM users WHERE email = ?");
     $stmtUser->execute([$email]);
     $user = $stmtUser->fetch();
@@ -41,7 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             header('Location: student/dashboard.php');
             exit;
         }
-    } elseif (!$admin) { // Only set error if neither admin nor user matched
+    } else {
         $error = "Invalid email or password.";
     }
 }
