@@ -43,19 +43,32 @@ try {
         echo "<p style='color: blue;'>ℹ Test user (check@gmail.com) already exists.</p>";
     }
 
-    // 3. Ensure Admin exists and is approved
+    // 3. Ensure Admin table exists and is populated
+    $pdo->exec("CREATE TABLE IF NOT EXISTS admin (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        name VARCHAR(100) NOT NULL,
+        email VARCHAR(100) NOT NULL UNIQUE,
+        password VARCHAR(255) NOT NULL,
+        role VARCHAR(20) DEFAULT 'admin',
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    )");
+    echo "<p style='color: green;'>✓ Admin table checked/created.</p>";
+
+    // Remove old admin from users table if exists to avoid conflicts
+    $pdo->exec("DELETE FROM users WHERE email = 'skill@admin.com'");
+
     $admin_email = 'skill@admin.com';
     $admin_pass = password_hash('skill@access.com', PASSWORD_DEFAULT);
 
-    $stmt = $pdo->prepare("SELECT id FROM users WHERE email = ?");
+    $stmt = $pdo->prepare("SELECT id FROM admin WHERE email = ?");
     $stmt->execute([$admin_email]);
     if (!$stmt->fetch()) {
-        $stmt = $pdo->prepare("INSERT INTO users (name, email, password, role, is_approved) VALUES ('Admin', ?, ?, 'admin', 1)");
+        $stmt = $pdo->prepare("INSERT INTO admin (name, email, password) VALUES ('Admin', ?, ?)");
         $stmt->execute([$admin_email, $admin_pass]);
-        echo "<p style='color: green;'>✓ Admin user (skill@admin.com) created with password 'skill@access.com'.</p>";
+        echo "<p style='color: green;'>✓ Admin user (skill@admin.com) created in 'admin' table with password 'skill@access.com'.</p>";
     } else {
-        $pdo->prepare("UPDATE users SET is_approved = 1, password = ? WHERE email = ?")->execute([$admin_pass, $admin_email]);
-        echo "<p style='color: blue;'>ℹ Admin user updated to approved and password reset to 'skill@access.com'.</p>";
+        $pdo->prepare("UPDATE admin SET password = ? WHERE email = ?")->execute([$admin_pass, $admin_email]);
+        echo "<p style='color: blue;'>ℹ Admin user in 'admin' table updated with password 'skill@access.com'.</p>";
     }
 
     echo "<hr><h3 style='color: green;'>✅ Setup Complete!</h3>";

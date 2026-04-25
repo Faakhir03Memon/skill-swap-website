@@ -8,26 +8,35 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $email = $_POST['email'];
     $password = $_POST['password'];
 
-    $stmt = $pdo->prepare("SELECT * FROM users WHERE email = ?");
-    $stmt->execute([$email]);
-    $user = $stmt->fetch();
+    // First check admin table
+    $stmtAdmin = $pdo->prepare("SELECT * FROM admin WHERE email = ?");
+    $stmtAdmin->execute([$email]);
+    $admin = $stmtAdmin->fetch();
+
+    if ($admin && password_verify($password, $admin['password'])) {
+        $_SESSION['user_id'] = $admin['id'];
+        $_SESSION['user_name'] = $admin['name'];
+        $_SESSION['user_role'] = $admin['role'];
+        header('Location: admin/dashboard.php');
+        exit;
+    }
+
+    // If not admin, check users table for students
+    $stmtUser = $pdo->prepare("SELECT * FROM users WHERE email = ?");
+    $stmtUser->execute([$email]);
+    $user = $stmtUser->fetch();
 
     if ($user && password_verify($password, $user['password'])) {
-        if ($user['role'] !== 'admin' && $user['is_approved'] == 0) {
+        if ($user['is_approved'] == 0) {
             $error = "Your account is pending approval. Please wait for admin confirmation.";
         } else {
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['user_name'] = $user['name'];
             $_SESSION['user_role'] = $user['role'];
-
-            if ($user['role'] == 'admin') {
-                header('Location: admin/dashboard.php');
-            } else {
-                header('Location: student/dashboard.php');
-            }
+            header('Location: student/dashboard.php');
             exit;
         }
-    } else {
+    } elseif (!$admin) { // Only set error if neither admin nor user matched
         $error = "Invalid email or password.";
     }
 }
