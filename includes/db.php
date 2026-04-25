@@ -1,0 +1,22 @@
+<?php
+$host = 'localhost';
+$db   = 'skill_swap';
+$user = 'root';
+$pass = '';
+$charset = 'utf8mb4';
+
+$dsn = "mysql:host=$host;dbname=$db;charset=$charset";
+$options = [
+    PDO::ATTR_ERRMODE            => PDO::ATTR_ERRMODE_EXCEPTION,
+    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::ATTR_FETCH_ASSOC,
+    PDO::ATTR_EMULATE_PREPARES   => false,
+];
+
+try {
+     $pdo = new PDO($dsn, $user, $pass, $options);
+} catch (\PDOException $e) {
+     // For development, we show the error. In production, we'd log it and show a generic message.
+     // die($e->getMessage());
+     error_log($e->getMessage());
+}
+?>
