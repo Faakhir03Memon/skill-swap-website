@@ -124,6 +124,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <label>Password</label>
                 <input type="password" name="password" class="form-control" placeholder="••••••••" required>
             </div>
+            <div class="form-group">
+                <label>Confirm Password</label>
+                <input type="password" name="confirm_password" class="form-control" placeholder="••••••••" required>
+            </div>
             <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 10px; padding: 14px;">Create Account</button>
         </form>
 
