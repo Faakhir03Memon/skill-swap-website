@@ -39,14 +39,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body style="display: flex; align-items: center; justify-content: center; min-height: 100vh;">
-    <div class="glass" style="width: 100%; max-width: 450px; padding: 40px; animation: fadeIn 0.5s ease-out;">
-        <div style="text-align: center; margin-bottom: 30px;">
-            <a href="index.php" class="logo" style="text-decoration: none;">SKILLSWAP</a>
-            <p style="color: var(--text-muted); margin-top: 10px;">Create your account and start swapping.</p>
+    <div class="bg-blobs">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
+
+    <div class="glass reveal active" style="width: 100%; max-width: 480px; padding: 48px; position: relative; z-index: 1;">
+        <div style="text-align: center; margin-bottom: 40px;">
+            <a href="index.php" class="logo" style="text-decoration: none; font-size: 32px;">SKILLSWAP</a>
+            <p style="color: var(--text-muted); margin-top: 12px; font-weight: 300;">Join the community and start swapping skills.</p>
         </div>
 
         <?php if($error): ?>
-            <div style="background: rgba(244, 63, 94, 0.2); color: var(--accent); padding: 12px; border-radius: 8px; margin-bottom: 20px; text-align: center; font-size: 14px;">
+            <div style="background: rgba(244, 63, 94, 0.1); color: var(--accent); padding: 14px; border-radius: 12px; margin-bottom: 24px; text-align: center; font-size: 14px; border: 1px solid rgba(244, 63, 94, 0.2);">
                 <?php echo $error; ?>
             </div>
         <?php endif; ?>
@@ -59,28 +65,35 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <?php endif; ?>
 
         <form method="POST">
-            <div class="form-group">
-                <label>Full Name</label>
-                <input type="text" name="name" class="form-control" placeholder="John Doe" required>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" name="name" class="form-control" placeholder="John Doe" required>
+                </div>
+                <div class="form-group">
+                    <label>Role</label>
+                    <select name="role" class="form-control" style="appearance: none;">
+                        <option value="student">Student</option>
+                        <option value="admin">Admin</option>
+                    </select>
+                </div>
             </div>
             <div class="form-group">
                 <label>Email Address</label>
-                <input type="email" name="email" class="form-control" placeholder="john@example.com" required>
+                <input type="email" name="email" class="form-control" placeholder="name@university.edu" required>
             </div>
             <div class="form-group">
                 <label>Password</label>
                 <input type="password" name="password" class="form-control" placeholder="••••••••" required>
             </div>
-            <div class="form-group">
-                <label>Confirm Password</label>
-                <input type="password" name="confirm_password" class="form-control" placeholder="••••••••" required>
-            </div>
-            <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 10px;">Create Account</button>
+            <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 10px; padding: 14px;">Create Account</button>
         </form>
 
-        <p style="text-align: center; margin-top: 25px; color: var(--text-muted); font-size: 14px;">
-            Already have an account? <a href="login.php" style="color: var(--primary); text-decoration: none;">Login</a>
+        <p style="text-align: center; margin-top: 32px; color: var(--text-muted); font-size: 14px;">
+            Already have an account? <a href="login.php" style="color: var(--primary-bright); text-decoration: none; font-weight: 600;">Sign In</a>
         </p>
     </div>
+
+    <script src="assets/js/animations.js"></script>
 </body>
 </html>
