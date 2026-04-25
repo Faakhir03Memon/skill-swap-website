@@ -1,6 +1,14 @@
 <?php
 session_start();
 require_once 'includes/db.php';
+require_once 'includes/send_email.php';
+
+// Silently ensure the columns exist so the token gets saved properly
+try {
+    $pdo->exec("ALTER TABLE users ADD COLUMN reset_token VARCHAR(255) NULL");
+    $pdo->exec("ALTER TABLE users ADD COLUMN reset_token_expiry DATETIME NULL");
+} catch (Exception $e) { /* Ignore if they already exist */ }
+
 $message = ''; $msg_type = '';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -17,22 +25,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         
         $reset_link = "http://" . $_SERVER['HTTP_HOST'] . dirname($_SERVER['PHP_SELF']) . "/reset_password.php?token=" . $token;
         
-        $subject = "Password Reset Request - SkillSwap";
-        $email_content = "Hello,\n\nYou have requested to reset your password for SkillSwap.\n\n";
-        $email_content .= "Please click the link below to reset your password:\n";
-        $email_content .= $reset_link . "\n\n";
-        $email_content .= "If you did not request this, please ignore this email.\n\nRegards,\nSkillSwap Team";
-        
-        $headers = "From: SkillSwap <info.skillswapp@gmail.com>\r\n";
-        $headers .= "Reply-To: info.skillswapp@gmail.com\r\n";
-        $headers .= "X-Mailer: PHP/" . phpversion();
-        
-        if (@mail($email, $subject, $email_content, $headers)) {
+        // Try to send via PHPMailer script
+        if (sendResetEmail($email, $reset_link)) {
             $message = "A password reset link has been sent to your email.";
             $msg_type = 'success';
         } else {
-            // Fallback for local testing if mail() is not configured in XAMPP
-            $message = "Failed to send email. (Local dev testing link: <a href='$reset_link' style='color:#fff;text-decoration:underline'>Click Here</a>)"; 
+            // Fallback for local testing
+            $message = "<div style='width:100%; display:block; line-height:1.5'>
+                          Failed to send email. <br>
+                          <span style='font-size:12px; opacity:0.8'>Local Dev Link: </span>
+                          <a href='$reset_link' style='color:#fff; text-decoration:underline; font-weight:bold'>Click Here</a>
+                        </div>"; 
             $msg_type = 'warning';
         }
     } else {
