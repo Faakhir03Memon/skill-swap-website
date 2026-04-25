@@ -216,7 +216,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
 
                 <label class="method-card glass" style="display:flex;align-items:center;gap:10px;padding:11px 14px;border-radius:12px;border:1px solid rgba(255,255,255,0.07);">
-                    <input type="radio" name="payment_method" value="JazzCash" required style="accent-color:#e6474d;width:15px;height:15px;">
+                    <input type="radio" name="payment_method" value="JazzCash" required style="accent-color:#e6474d;width:15px;height:15px;" checked onchange="updateAccountNum()">
                     <div>
                         <div style="font-weight:700;font-size:13px;color:#e6474d;"><i class="fas fa-mobile-alt" style="margin-right:5px;"></i>JazzCash</div>
                         <div style="font-size:11px;color:var(--text-muted);">Mobile Account</div>
@@ -224,7 +224,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 </label>
 
                 <label class="method-card glass" style="display:flex;align-items:center;gap:10px;padding:11px 14px;border-radius:12px;border:1px solid rgba(255,255,255,0.07);">
-                    <input type="radio" name="payment_method" value="EasyPaisa" style="accent-color:#44b549;width:15px;height:15px;">
+                    <input type="radio" name="payment_method" value="EasyPaisa" style="accent-color:#44b549;width:15px;height:15px;" onchange="updateAccountNum()">
                     <div>
                         <div style="font-weight:700;font-size:13px;color:#44b549;"><i class="fas fa-mobile-alt" style="margin-right:5px;"></i>EasyPaisa</div>
                         <div style="font-size:11px;color:var(--text-muted);">Mobile Account</div>
@@ -232,7 +232,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 </label>
 
                 <label class="method-card glass" style="display:flex;align-items:center;gap:10px;padding:11px 14px;border-radius:12px;border:1px solid rgba(255,255,255,0.07);">
-                    <input type="radio" name="payment_method" value="Bank Transfer" style="accent-color:var(--primary-bright);width:15px;height:15px;">
+                    <input type="radio" name="payment_method" value="Bank Transfer" style="accent-color:var(--primary-bright);width:15px;height:15px;" onchange="updateAccountNum()">
                     <div>
                         <div style="font-weight:700;font-size:13px;"><i class="fas fa-university" style="margin-right:5px;"></i>Bank Transfer</div>
                         <div style="font-size:11px;color:var(--text-muted);">Direct Transfer</div>
@@ -240,9 +240,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 </label>
 
                 <label class="method-card glass" style="display:flex;align-items:center;gap:10px;padding:11px 14px;border-radius:12px;border:1px solid rgba(255,255,255,0.07);">
-                    <input type="radio" name="payment_method" value="SadaPay" style="accent-color:#7c3aed;width:15px;height:15px;">
+                    <input type="radio" name="payment_method" value="NayaPay" style="accent-color:#ff6b00;width:15px;height:15px;" onchange="updateAccountNum()">
                     <div>
-                        <div style="font-weight:700;font-size:13px;color:#7c3aed;"><i class="fas fa-wallet" style="margin-right:5px;"></i>SadaPay</div>
+                        <div style="font-weight:700;font-size:13px;color:#ff6b00;"><i class="fas fa-wallet" style="margin-right:5px;"></i>NayaPay</div>
                         <div style="font-size:11px;color:var(--text-muted);">Digital Wallet</div>
                     </div>
                 </label>
@@ -260,8 +260,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <div style="display:flex;justify-content:space-between;align-items:center;">
                     <div>
                         <div style="font-size:11px;color:var(--text-muted);margin-bottom:5px;text-transform:uppercase;letter-spacing:0.5px;">Account Number</div>
-                        <div class="account-num" id="acc-num">0300-1234567</div>
-                        <div style="font-size:12px;color:var(--text-muted);margin-top:4px;">Account Name: <strong style="color:var(--text-main);">SkillSwap Admin</strong></div>
+                        <div class="account-num" id="acc-num">03708433612</div>
+                        <div style="font-size:12px;color:var(--text-muted);margin-top:4px;">Account Name: <strong style="color:var(--text-main);">Faakhir Memon</strong></div>
                     </div>
                     <button type="button" onclick="copyAcc()" id="copy-btn"
                         style="background:rgba(255,255,255,0.06);border:1px solid var(--glass-border);color:var(--text-muted);border-radius:8px;padding:8px 12px;cursor:pointer;font-size:12px;transition:0.2s;">
@@ -313,6 +313,22 @@ function copyAcc() {
         setTimeout(() => { btn.innerHTML = '<i class="fas fa-copy"></i> Copy'; btn.style.color = ''; }, 2000);
     });
 }
+
+function updateAccountNum() {
+    const selectedMethod = document.querySelector('input[name="payment_method"]:checked').value;
+    const accNumElement = document.getElementById('acc-num');
+    
+    if (selectedMethod === 'Bank Transfer') {
+        accNumElement.innerText = 'Coming Soon';
+    } else {
+        accNumElement.innerText = '03708433612';
+    }
+}
+
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', function() {
+    updateAccountNum();
+});
 </script>
 </body>
 </html>
