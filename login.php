@@ -76,7 +76,7 @@ body { display:flex; align-items:center; justify-content:center; min-height:100v
       </button>
     </form>
 
-    <div class="divider-line"><span>Don't have an account?</span></div>
+    <div clxdass="divider-line"><span>Don't have an account?</span></div>
     <a href="register.php" class="btn btn-outline" style="width:100%;padding:13px"><i class="fas fa-user-plus"></i> Create Account</a>
   </div>
 </div>
