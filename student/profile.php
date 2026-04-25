@@ -21,7 +21,7 @@ if ($_SERVER['REQUEST_METHOD']=='POST') {
                     $skill_id = $existing['id'];
                 } else {
                     // Add to global skills table so everyone can see it
-                    $pdo->prepare("INSERT INTO skills (name, category, description) VALUES (?, 'Community Added', 'Skill added by a community member')")->execute([$custom_name]);
+                    $pdo->prepare("INSERT INTO skills (name, category) VALUES (?, 'Community Added')")->execute([$custom_name]);
                     $skill_id = $pdo->lastInsertId();
                 }
             }
