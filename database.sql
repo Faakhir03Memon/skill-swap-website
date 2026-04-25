@@ -12,7 +12,9 @@ CREATE TABLE IF NOT EXISTS users (
     role ENUM('student', 'admin') DEFAULT 'student',
     profile_image VARCHAR(255) DEFAULT 'default.png',
     bio TEXT,
-    ranking_points INT DEFAULT 0,
+    subscription_plan INT DEFAULT 0,
+    lecture_limit INT DEFAULT 0,
+    is_approved TINYINT(1) DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -96,6 +98,7 @@ CREATE TABLE IF NOT EXISTS skill_swaps (
 );
 
 -- Initial Admin User
--- Password 'skill@access.com' hashed using password_hash('skill@access.com', PASSWORD_DEFAULT)
--- Hashed value for 'skill@access.com' is approximately: $2y$10$7v8Q1Z1.vG8eZ0X0S7w8ueR.lG8o0z.X8V9o2t2wG5m7fR1S1a1g1 (This is a placeholder, I'll generate it properly in PHP)
-INSERT INTO users (name, email, password, role) VALUES ('Admin', 'skill@admin.com', '$2y$10$L7v.w.S6u7iB8R7S7S7S7ueR.lG8o0z.X8V9o2t2wG5m7fR1S1a1g1', 'admin');
+INSERT INTO users (name, email, password, role, is_approved) VALUES ('Admin', 'skill@admin.com', '$2y$10$L7v.w.S6u7iB8R7S7S7S7ueR.lG8o0z.X8V9o2t2wG5m7fR1S1a1g1', 'admin', 1);
+
+-- Initial Test User (Password: 1234568)
+INSERT INTO users (name, email, password, role, is_approved) VALUES ('Test User', 'check@gmail.com', '$2y$10$O9H.zP9yLzQ.Wv9Hq7V8S7S7S7S7ueR.lG8o0z.X8V9o2t2wG5m7f', 'student', 1);
