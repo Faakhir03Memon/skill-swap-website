@@ -4,11 +4,29 @@ require_once 'includes/db.php';
 echo "<h2>Database Setup & Migration</h2>";
 
 try {
-    // 1. Add new columns to users table
-    $pdo->exec("ALTER TABLE users ADD COLUMN IF NOT EXISTS subscription_plan INT DEFAULT 0");
-    $pdo->exec("ALTER TABLE users ADD COLUMN IF NOT EXISTS lecture_limit INT DEFAULT 0");
-    $pdo->exec("ALTER TABLE users ADD COLUMN IF NOT EXISTS is_approved TINYINT(1) DEFAULT 0");
-    echo "<p style='color: green;'>✓ Users table updated with subscription fields.</p>";
+    // 1. Add new columns to users table (compatible with all MySQL versions)
+    $columns = $pdo->query("SHOW COLUMNS FROM users")->fetchAll(PDO::FETCH_COLUMN);
+
+    if (!in_array('subscription_plan', $columns)) {
+        $pdo->exec("ALTER TABLE users ADD COLUMN subscription_plan INT DEFAULT 0");
+        echo "<p style='color: green;'>✓ Added 'subscription_plan' column.</p>";
+    } else {
+        echo "<p style='color: blue;'>ℹ 'subscription_plan' column already exists.</p>";
+    }
+
+    if (!in_array('lecture_limit', $columns)) {
+        $pdo->exec("ALTER TABLE users ADD COLUMN lecture_limit INT DEFAULT 0");
+        echo "<p style='color: green;'>✓ Added 'lecture_limit' column.</p>";
+    } else {
+        echo "<p style='color: blue;'>ℹ 'lecture_limit' column already exists.</p>";
+    }
+
+    if (!in_array('is_approved', $columns)) {
+        $pdo->exec("ALTER TABLE users ADD COLUMN is_approved TINYINT(1) DEFAULT 0");
+        echo "<p style='color: green;'>✓ Added 'is_approved' column.</p>";
+    } else {
+        echo "<p style='color: blue;'>ℹ 'is_approved' column already exists.</p>";
+    }
 
     // 2. Insert Test User (check@gmail.com / 1234568)
     $email = 'check@gmail.com';
@@ -35,12 +53,13 @@ try {
         $stmt->execute([$admin_email, $admin_pass]);
         echo "<p style='color: green;'>✓ Admin user (skill@admin.com) created.</p>";
     } else {
-        $pdo->exec("UPDATE users SET is_approved = 1 WHERE email = '$admin_email'");
-        echo "<p style='color: blue;'>ℹ Admin user updated to be approved.</p>";
+        $pdo->prepare("UPDATE users SET is_approved = 1 WHERE email = ?")->execute([$admin_email]);
+        echo "<p style='color: blue;'>ℹ Admin user updated to approved.</p>";
     }
 
-    echo "<h3>Setup Complete!</h3>";
+    echo "<hr><h3 style='color: green;'>✅ Setup Complete!</h3>";
     echo "<p><a href='login.php'>Go to Login Page</a></p>";
+    echo "<p><a href='register.php'>Go to Register Page</a></p>";
 
 } catch (PDOException $e) {
     echo "<p style='color: red;'>Error: " . $e->getMessage() . "</p>";
