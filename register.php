@@ -37,21 +37,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register | SkillSwap</title>
     <link rel="stylesheet" href="assets/css/style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <!-- GSAP & Three.js Libraries -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
 <body style="display: flex; align-items: center; justify-content: center; min-height: 100vh;">
-    <div id="canvas-container"></div>
     <div class="bg-blobs">
         <div class="blob blob-1"></div>
         <div class="blob blob-2"></div>
         <div class="blob blob-3"></div>
     </div>
 
-    <div class="glass reveal" style="width: 100%; max-width: 480px; padding: 48px; position: relative; z-index: 1;">
+    <div class="glass reveal active" style="width: 100%; max-width: 480px; padding: 48px; position: relative; z-index: 1;">
         <div style="text-align: center; margin-bottom: 40px;">
             <a href="index.php" class="logo" style="text-decoration: none; font-size: 32px;">SKILLSWAP</a>
             <p style="color: var(--text-muted); margin-top: 12px; font-weight: 300;">Join the community and start swapping skills.</p>
