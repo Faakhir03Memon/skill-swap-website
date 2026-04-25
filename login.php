@@ -9,9 +9,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $password = $_POST['password'];
 
     // First check admin table
-    $stmtAdmin = $pdo->prepare("SELECT * FROM admin WHERE email = ?");
-    $stmtAdmin->execute([$email]);
-    $admin = $stmtAdmin->fetch();
+    $admin = null;
+    try {
+        $stmtAdmin = $pdo->prepare("SELECT * FROM admin WHERE email = ?");
+        $stmtAdmin->execute([$email]);
+        $admin = $stmtAdmin->fetch();
+    } catch (PDOException $e) {
+        // Table probably doesn't exist yet, ignore and fallback to users table
+    }
 
     if ($admin && password_verify($password, $admin['password'])) {
         $_SESSION['user_id'] = $admin['id'];
