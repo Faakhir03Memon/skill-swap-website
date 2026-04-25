@@ -7,12 +7,36 @@ $message = $msg_type = '';
 
 if ($_SERVER['REQUEST_METHOD']=='POST') {
     if (isset($_POST['add_skill'])) {
-        $check = $pdo->prepare("SELECT id FROM user_skills WHERE user_id=? AND skill_id=? AND type=?");
-        $check->execute([$user_id, $_POST['skill_id'], $_POST['type']]);
-        if (!$check->fetch()) {
-            $pdo->prepare("INSERT INTO user_skills (user_id,skill_id,type,proficiency_level) VALUES (?,?,?,?)")->execute([$user_id,$_POST['skill_id'],$_POST['type'],$_POST['level']]);
-            $message = "Skill added successfully!"; $msg_type = 'success';
-        } else { $message = "Skill already listed."; $msg_type = 'warning'; }
+        $skill_id = $_POST['skill_id'];
+        
+        // Handle new custom skill
+        if ($skill_id == 'new') {
+            $custom_name = trim($_POST['custom_skill_name']);
+            if (!empty($custom_name)) {
+                // Check if it already exists globally
+                $check_exist = $pdo->prepare("SELECT id FROM skills WHERE name = ?");
+                $check_exist->execute([$custom_name]);
+                $existing = $check_exist->fetch();
+                if ($existing) {
+                    $skill_id = $existing['id'];
+                } else {
+                    // Add to global skills table so everyone can see it
+                    $pdo->prepare("INSERT INTO skills (name, category, description) VALUES (?, 'Community Added', 'Skill added by a community member')")->execute([$custom_name]);
+                    $skill_id = $pdo->lastInsertId();
+                }
+            }
+        }
+
+        if ($skill_id && $skill_id != 'new') {
+            $check = $pdo->prepare("SELECT id FROM user_skills WHERE user_id=? AND skill_id=? AND type=?");
+            $check->execute([$user_id, $skill_id, $_POST['type']]);
+            if (!$check->fetch()) {
+                $pdo->prepare("INSERT INTO user_skills (user_id,skill_id,type,proficiency_level) VALUES (?,?,?,?)")->execute([$user_id,$skill_id,$_POST['type'],$_POST['level']]);
+                $message = "Skill added successfully!"; $msg_type = 'success';
+            } else { $message = "Skill already listed."; $msg_type = 'warning'; }
+        } else {
+            $message = "Please provide a valid skill name."; $msg_type = 'danger';
+        }
     }
     if (isset($_POST['remove_skill_id'])) {
         $pdo->prepare("DELETE FROM user_skills WHERE id=? AND user_id=?")->execute([$_POST['remove_skill_id'], $user_id]);
@@ -43,7 +67,7 @@ $my_skills_list = $my_skills_stmt->fetchAll();
   <div class="page-header reveal">
     <div>
       <h1><i class="fas fa-user-circle" style="color:var(--primary-light);margin-right:12px"></i>My Profile & Skills</h1>
-      <p>Manage skills you can teach and skills you want to learn.</p>
+      <p>Manage skills you can teach and skills you want to learn. Added custom skills will be visible to everyone.</p>
     </div>
   </div>
 
@@ -72,8 +96,9 @@ $my_skills_list = $my_skills_stmt->fetchAll();
       <form method="POST">
         <div class="form-group">
           <label>Select Skill</label>
-          <select name="skill_id" class="form-control" required>
+          <select name="skill_id" id="skillSelect" class="form-control" required onchange="toggleCustomInput()">
             <option value="">-- Choose Skill --</option>
+            <option value="new" style="font-weight:bold;color:var(--warning)">➕ Add Custom Skill (Not in list)</option>
             <?php
             $cur_cat = '';
             foreach($all_skills as $sk):
@@ -87,6 +112,13 @@ $my_skills_list = $my_skills_stmt->fetchAll();
             <?php endforeach; if($cur_cat) echo '</optgroup>'; ?>
           </select>
         </div>
+        
+        <div class="form-group" id="customSkillGroup" style="display:none;background:rgba(245,158,11,0.05);padding:14px;border:1px dashed rgba(245,158,11,0.4);border-radius:10px">
+          <label style="color:var(--warning)">Your Custom Skill Name</label>
+          <input type="text" name="custom_skill_name" class="form-control" placeholder="e.g. Quantum Computing" style="border-color:rgba(245,158,11,0.3)">
+          <small style="color:var(--text-muted);font-size:11px;display:block;margin-top:6px">This will be added globally for everyone to see.</small>
+        </div>
+
         <div class="form-group">
           <label>Type</label>
           <select name="type" class="form-control" required>
@@ -147,6 +179,18 @@ $my_skills_list = $my_skills_stmt->fetchAll();
 </main>
 </div>
 <script>
+function toggleCustomInput() {
+  const select = document.getElementById('skillSelect');
+  const customGroup = document.getElementById('customSkillGroup');
+  if (select.value === 'new') {
+    customGroup.style.display = 'block';
+    customGroup.querySelector('input').required = true;
+  } else {
+    customGroup.style.display = 'none';
+    customGroup.querySelector('input').required = false;
+  }
+}
+
 document.querySelectorAll('.reveal').forEach((el,i)=>setTimeout(()=>el.classList.add('active'),i*80));
 document.querySelectorAll('input[name="level"]').forEach(radio => {
   radio.addEventListener('change', () => {
