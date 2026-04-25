@@ -17,9 +17,24 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         
         $reset_link = "http://" . $_SERVER['HTTP_HOST'] . dirname($_SERVER['PHP_SELF']) . "/reset_password.php?token=" . $token;
         
-        // In a real app we'd send an email here. For local dev, we display it or pretend.
-        $message = "Password reset link generated! (For local testing: <a href='$reset_link' style='color:#fff;text-decoration:underline'>Click Here</a>)"; 
-        $msg_type = 'success';
+        $subject = "Password Reset Request - SkillSwap";
+        $email_content = "Hello,\n\nYou have requested to reset your password for SkillSwap.\n\n";
+        $email_content .= "Please click the link below to reset your password:\n";
+        $email_content .= $reset_link . "\n\n";
+        $email_content .= "If you did not request this, please ignore this email.\n\nRegards,\nSkillSwap Team";
+        
+        $headers = "From: SkillSwap <info.skillswapp@gmail.com>\r\n";
+        $headers .= "Reply-To: info.skillswapp@gmail.com\r\n";
+        $headers .= "X-Mailer: PHP/" . phpversion();
+        
+        if (@mail($email, $subject, $email_content, $headers)) {
+            $message = "A password reset link has been sent to your email.";
+            $msg_type = 'success';
+        } else {
+            // Fallback for local testing if mail() is not configured in XAMPP
+            $message = "Failed to send email. (Local dev testing link: <a href='$reset_link' style='color:#fff;text-decoration:underline'>Click Here</a>)"; 
+            $msg_type = 'warning';
+        }
     } else {
         // Generic message for security
         $message = "If an account with that email exists, a password reset link has been sent.";
