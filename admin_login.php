@@ -82,7 +82,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <label>Admin Email</label>
         <div style="position:relative">
           <i class="fas fa-envelope" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--text-muted);font-size:14px"></i>
-          <input type="email" name="email" class="form-control" placeholder="skill@admin.com" value="skill@admin.com" style="padding-left:42px" required>
+          <input type="email" name="email" class="form-control" placeholder="Enter admin email" style="padding-left:42px" required>
         </div>
       </div>
       <div class="form-group">
