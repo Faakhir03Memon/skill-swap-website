@@ -13,16 +13,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $user = $stmt->fetch();
 
     if ($user && password_verify($password, $user['password'])) {
-        $_SESSION['user_id'] = $user['id'];
-        $_SESSION['user_name'] = $user['name'];
-        $_SESSION['user_role'] = $user['role'];
-
-        if ($user['role'] == 'admin') {
-            header('Location: admin/dashboard.php');
+        if ($user['role'] !== 'admin' && $user['is_approved'] == 0) {
+            $error = "Your account is pending approval. Please wait for admin confirmation.";
         } else {
-            header('Location: student/dashboard.php');
+            $_SESSION['user_id'] = $user['id'];
+            $_SESSION['user_name'] = $user['name'];
+            $_SESSION['user_role'] = $user['role'];
+
+            if ($user['role'] == 'admin') {
+                header('Location: admin/dashboard.php');
+            } else {
+                header('Location: student/dashboard.php');
+            }
+            exit;
         }
-        exit;
     } else {
         $error = "Invalid email or password.";
     }

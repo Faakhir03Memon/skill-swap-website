@@ -20,9 +20,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $error = "Email already registered.";
         } else {
             $hashed_pass = password_hash($password, PASSWORD_DEFAULT);
-            $stmt = $pdo->prepare("INSERT INTO users (name, email, password, role) VALUES (?, ?, ?, 'student')");
-            if ($stmt->execute([$name, $email, $hashed_pass])) {
-                $success = "Registration successful! You can now login.";
+            $subscription_plan = $_POST['plan'];
+            $lecture_limit = 0;
+            if ($subscription_plan == 199) $lecture_limit = 3;
+            elseif ($subscription_plan == 299) $lecture_limit = 5;
+            elseif ($subscription_plan == 499) $lecture_limit = 7;
+
+            $stmt = $pdo->prepare("INSERT INTO users (name, email, password, role, subscription_plan, lecture_limit, is_approved) VALUES (?, ?, ?, 'student', ?, ?, 0)");
+            if ($stmt->execute([$name, $email, $hashed_pass, $subscription_plan, $lecture_limit])) {
+                $success = "Registration successful! Your account is pending admin approval after payment.";
             } else {
                 $error = "Something went wrong. Please try again.";
             }
@@ -65,19 +71,51 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <?php endif; ?>
 
         <form method="POST">
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-                <div class="form-group">
-                    <label>Full Name</label>
-                    <input type="text" name="name" class="form-control" placeholder="John Doe" required>
-                </div>
-                <div class="form-group">
-                    <label>Role</label>
-                    <select name="role" class="form-control" style="appearance: none;">
-                        <option value="student">Student</option>
-                        <option value="admin">Admin</option>
-                    </select>
+            <div class="form-group">
+                <label>Full Name</label>
+                <input type="text" name="name" class="form-control" placeholder="John Doe" required>
+            </div>
+            <div class="form-group" style="margin-top: 15px;">
+                <label>Select Your Plan</label>
+                <div style="display: grid; grid-template-columns: 1fr; gap: 10px; margin-top: 8px;">
+                    <label class="plan-card" style="display: flex; justify-content: space-between; padding: 12px; border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; cursor: pointer; transition: 0.3s;">
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <input type="radio" name="plan" value="199" required>
+                            <div>
+                                <div style="font-weight: 600;">Basic Plan</div>
+                                <div style="font-size: 12px; color: var(--text-muted);">3 Lectures / Day</div>
+                            </div>
+                        </div>
+                        <div style="font-weight: bold; color: var(--primary-bright);">199rs</div>
+                    </label>
+                    <label class="plan-card" style="display: flex; justify-content: space-between; padding: 12px; border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; cursor: pointer; transition: 0.3s;">
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <input type="radio" name="plan" value="299">
+                            <div>
+                                <div style="font-weight: 600;">Standard Plan</div>
+                                <div style="font-size: 12px; color: var(--text-muted);">5 Lectures / Day</div>
+                            </div>
+                        </div>
+                        <div style="font-weight: bold; color: var(--primary-bright);">299rs</div>
+                    </label>
+                    <label class="plan-card" style="display: flex; justify-content: space-between; padding: 12px; border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; cursor: pointer; transition: 0.3s;">
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <input type="radio" name="plan" value="499">
+                            <div>
+                                <div style="font-weight: 600;">Premium Plan</div>
+                                <div style="font-size: 12px; color: var(--text-muted);">7 Lectures / Day</div>
+                            </div>
+                        </div>
+                        <div style="font-weight: bold; color: var(--primary-bright);">499rs</div>
+                    </label>
                 </div>
             </div>
+            <style>
+                .plan-card:has(input:checked) {
+                    border-color: var(--primary-bright) !important;
+                    background: rgba(124, 58, 237, 0.1);
+                }
+            </style>
             <div class="form-group">
                 <label>Email Address</label>
                 <input type="email" name="email" class="form-control" placeholder="name@university.edu" required>
