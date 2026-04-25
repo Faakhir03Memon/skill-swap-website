@@ -52,49 +52,65 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Login | SkillSwap</title>
     <link rel="stylesheet" href="assets/css/style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>body{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:24px}</style>
 </head>
-<body style="display: flex; align-items: center; justify-content: center; min-height: 100vh;">
-    <div class="bg-blobs">
-        <div class="blob blob-1" style="background: var(--warning);"></div>
-        <div class="blob blob-2" style="background: var(--accent);"></div>
-        <div class="blob blob-3"></div>
+<body>
+<div class="bg-blobs"><div class="blob blob-1"></div><div class="blob blob-2"></div><div class="blob blob-3"></div></div>
+
+<div style="width:100%;max-width:420px;position:relative;z-index:1">
+  <div style="text-align:center;margin-bottom:32px">
+    <div class="logo" style="font-size:28px;display:block;margin-bottom:8px">⚡ SKILLSWAP</div>
+    <p style="color:var(--text-muted);font-size:14px">Secure Admin Portal</p>
+  </div>
+
+  <div class="card reveal active">
+    <div style="text-align:center;margin-bottom:28px">
+      <div style="width:60px;height:60px;background:rgba(245,158,11,0.12);border:1px solid rgba(245,158,11,0.3);border-radius:16px;display:flex;align-items:center;justify-content:center;margin:0 auto 14px">
+        <i class="fas fa-user-shield" style="font-size:24px;color:var(--warning)"></i>
+      </div>
+      <h2 style="font-size:20px;font-weight:800">Admin Login</h2>
+      <p style="color:var(--text-muted);font-size:13px;margin-top:4px">Authorized personnel only</p>
     </div>
 
-    <div class="glass reveal active" style="width: 100%; max-width: 420px; padding: 48px; position: relative; z-index: 1;">
-        <div style="text-align: center; margin-bottom: 40px;">
-            <div style="width: 64px; height: 64px; background: rgba(245, 158, 11, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; border: 1px solid rgba(245, 158, 11, 0.3);">
-                <i class="fas fa-user-shield" style="font-size: 28px; color: var(--warning);"></i>
-            </div>
-            <h2 style="font-size: 24px; font-weight: 800; margin-bottom: 8px;">Admin Portal</h2>
-            <p style="color: var(--text-muted); font-size: 14px;">Secure login for administrators only.</p>
+    <?php if($error): ?>
+    <div class="alert alert-danger"><i class="fas fa-exclamation-circle"></i> <?= $error ?></div>
+    <?php endif; ?>
+
+    <form method="POST">
+      <div class="form-group">
+        <label>Admin Email</label>
+        <div style="position:relative">
+          <i class="fas fa-envelope" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--text-muted);font-size:14px"></i>
+          <input type="email" name="email" class="form-control" placeholder="skill@admin.com" value="skill@admin.com" style="padding-left:42px" required>
         </div>
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <div style="position:relative">
+          <i class="fas fa-lock" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--text-muted);font-size:14px"></i>
+          <input type="password" name="password" id="apwd" class="form-control" placeholder="••••••••" style="padding-left:42px;padding-right:42px" required>
+          <i class="fas fa-eye" id="toggleApwd" style="position:absolute;right:14px;top:50%;transform:translateY(-50%);color:var(--text-muted);font-size:14px;cursor:pointer"></i>
+        </div>
+      </div>
+      <button type="submit" class="btn btn-primary" style="width:100%;padding:14px;font-size:15px;margin-top:8px;background:linear-gradient(135deg,#d97706,#f59e0b)">
+        <i class="fas fa-shield-alt"></i> Secure Login
+      </button>
+    </form>
+  </div>
 
-        <?php if($error): ?>
-            <div style="background: rgba(244, 63, 94, 0.1); color: var(--accent); padding: 14px; border-radius: 12px; margin-bottom: 24px; text-align: center; font-size: 14px; border: 1px solid rgba(244, 63, 94, 0.2);">
-                <i class="fas fa-exclamation-circle" style="margin-right: 8px;"></i><?php echo $error; ?>
-            </div>
-        <?php endif; ?>
+  <p style="text-align:center;margin-top:20px;font-size:13px">
+    <a href="login.php" style="color:var(--text-muted);text-decoration:none"><i class="fas fa-arrow-left" style="margin-right:5px"></i> Back to Student Login</a>
+  </p>
+</div>
 
-        <form method="POST">
-            <div class="form-group">
-                <label>Admin Email</label>
-                <input type="email" name="email" class="form-control" placeholder="skill@admin.com" required value="skill@admin.com">
-            </div>
-            <div class="form-group">
-                <label>Password</label>
-                <input type="password" name="password" class="form-control" placeholder="••••••••" required>
-            </div>
-            <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 10px; padding: 14px; background: linear-gradient(135deg, var(--warning), #d97706);">
-                <i class="fas fa-sign-in-alt" style="margin-right: 8px;"></i> Secure Login
-            </button>
-        </form>
-
-        <p style="text-align: center; margin-top: 32px; font-size: 13px;">
-            <a href="login.php" style="color: var(--text-muted); text-decoration: none;"><i class="fas fa-arrow-left" style="margin-right: 5px;"></i> Back to Student Login</a>
-        </p>
-    </div>
-
-    <script src="assets/js/animations.js"></script>
+<script>
+document.getElementById('toggleApwd').addEventListener('click', function() {
+  const pwd = document.getElementById('apwd');
+  const isText = pwd.type === 'text';
+  pwd.type = isText ? 'password' : 'text';
+  this.className = isText ? 'fas fa-eye' : 'fas fa-eye-slash';
+});
+</script>
 </body>
 </html>
