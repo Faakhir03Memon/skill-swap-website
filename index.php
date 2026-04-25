@@ -13,6 +13,12 @@ require_once 'includes/db.php';
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
+    <div class="bg-blobs">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
+
     <nav>
         <div class="container">
             <a href="index.php" class="logo">SKILLSWAP</a>
@@ -30,79 +36,91 @@ require_once 'includes/db.php';
     </nav>
 
     <header class="hero">
-        <div class="container">
-            <h1>Master New Skills Through <br><span style="color: var(--primary);">Collaborative Exchange</span></h1>
+        <div class="container reveal">
+            <h1>Master New Skills Through <br><span style="background: linear-gradient(135deg, var(--primary-bright), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Collaborative Exchange</span></h1>
             <p>Connect with fellow students, swap expertise, take certified exams, and climb the global leaderboard. Powered by AI matching.</p>
             <div class="hero-btns">
                 <a href="register.php" class="btn btn-primary">Get Started Free</a>
-                <a href="#how-it-works" class="btn btn-outline" style="margin-left: 15px;">How it Works</a>
+                <a href="#features" class="btn btn-outline" style="margin-left: 15px;">How it Works</a>
             </div>
         </div>
     </header>
 
     <section id="features" class="container" style="padding: 100px 0;">
-        <h2 style="text-align: center; font-size: 36px;">Why Choose SkillSwap?</h2>
+        <h2 class="reveal" style="text-align: center; font-size: 42px; margin-bottom: 20px;">Why Choose SkillSwap?</h2>
         <div class="grid-3">
-            <div class="card glass">
-                <i class="fas fa-robot" style="font-size: 40px; color: var(--primary); margin-bottom: 20px;"></i>
-                <h3>AI Skill Matching</h3>
-                <p>Our intelligent algorithm connects you with the perfect learning partner based on your skills and ranking.</p>
+            <div class="card glass reveal" style="transition-delay: 0.1s;">
+                <i class="fas fa-robot" style="font-size: 40px; color: var(--primary-bright); margin-bottom: 24px;"></i>
+                <h3 style="margin-bottom: 15px;">AI Skill Matching</h3>
+                <p style="color: var(--text-muted);">Our intelligent algorithm connects you with the perfect learning partner based on your skills and ranking.</p>
             </div>
-            <div class="card glass">
-                <i class="fas fa-file-signature" style="font-size: 40px; color: var(--secondary); margin-bottom: 20px;"></i>
-                <h3>Verified Exams</h3>
-                <p>Prove your expertise by taking skill-specific exams designed by top students and moderators.</p>
+            <div class="card glass reveal" style="transition-delay: 0.2s;">
+                <i class="fas fa-file-signature" style="font-size: 40px; color: var(--secondary); margin-bottom: 24px;"></i>
+                <h3 style="margin-bottom: 15px;">Verified Exams</h3>
+                <p style="color: var(--text-muted);">Prove your expertise by taking skill-specific exams designed by top students and moderators.</p>
             </div>
-            <div class="card glass">
-                <i class="fas fa-certificate" style="font-size: 40px; color: var(--accent); margin-bottom: 20px;"></i>
-                <h3>Global Certificates</h3>
-                <p>Earn professional certificates upon passing exams to showcase your skills to the world.</p>
+            <div class="card glass reveal" style="transition-delay: 0.3s;">
+                <i class="fas fa-certificate" style="font-size: 40px; color: var(--accent); margin-bottom: 24px;"></i>
+                <h3 style="margin-bottom: 15px;">Global Certificates</h3>
+                <p style="color: var(--text-muted);">Earn professional certificates upon passing exams to showcase your skills to the world.</p>
             </div>
         </div>
     </section>
 
-    <section id="leaderboard" class="container" style="padding-bottom: 100px;">
-        <div class="glass" style="padding: 40px;">
-            <h2 style="margin-bottom: 30px;">Top Contributors</h2>
-            <table class="data-table">
-                <thead>
-                    <tr>
-                        <th>Rank</th>
-                        <th>Student</th>
-                        <th>Skills Swapped</th>
-                        <th>Points</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php
-                    try {
-                        $stmt = $pdo->query("SELECT name, ranking_points FROM users WHERE role = 'student' ORDER BY ranking_points DESC LIMIT 5");
-                        $rank = 1;
-                        while($row = $stmt->fetch()) {
-                            echo "<tr>
-                                <td>#$rank</td>
-                                <td>{$row['name']}</td>
-                                <td>" . rand(5, 50) . "</td>
-                                <td>{$row['ranking_points']}</td>
-                                <td><span class='badge badge-success'>Elite</span></td>
-                            </tr>";
-                            $rank++;
+    <section id="leaderboard" class="container" style="padding-bottom: 120px;">
+        <div class="glass reveal" style="padding: 48px; position: relative; overflow: hidden;">
+            <h2 style="margin-bottom: 40px; font-size: 32px;">Top Contributors</h2>
+            <div style="overflow-x: auto;">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Rank</th>
+                            <th>Student</th>
+                            <th>Skills Swapped</th>
+                            <th>Points</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php
+                        try {
+                            $stmt = $pdo->query("SELECT name, ranking_points FROM users WHERE role = 'student' ORDER BY ranking_points DESC LIMIT 5");
+                            $rank = 1;
+                            while($row = $stmt->fetch()) {
+                                $badgeClass = $rank == 1 ? 'badge-success' : 'badge-primary';
+                                $status = $rank == 1 ? 'Elite' : 'Pro';
+                                echo "<tr class='reveal' style='transition-delay: " . ($rank * 0.1) . "s'>
+                                    <td><span style='font-weight: 800; color: var(--primary-bright);'>#$rank</span></td>
+                                    <td><div style='display:flex; align-items:center; gap:12px;'>
+                                        <div style='width:32px; height:32px; background:var(--glass-border); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:12px;'>" . substr($row['name'], 0, 1) . "</div>
+                                        {$row['name']}
+                                    </div></td>
+                                    <td>" . rand(5, 50) . "</td>
+                                    <td><span style='font-weight: 600;'>{$row['ranking_points']}</span></td>
+                                    <td><span class='badge $badgeClass'>$status</span></td>
+                                </tr>";
+                                $rank++;
+                            }
+                            if($rank == 1) {
+                                echo "<tr><td colspan='5' style='text-align:center; padding: 40px;'>No students yet. Be the first!</td></tr>";
+                            }
+                        } catch(Exception $e) {
+                            echo "<tr><td colspan='5' style='text-align:center; padding: 40px; color: var(--accent);'>Error loading leaderboard.</td></tr>";
                         }
-                        if($rank == 1) {
-                            echo "<tr><td colspan='5' style='text-align:center;'>No students yet. Be the first!</td></tr>";
-                        }
-                    } catch(Exception $e) {
-                        echo "<tr><td colspan='5'>Error loading leaderboard.</td></tr>";
-                    }
-                    ?>
-                </tbody>
-            </table>
+                        ?>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </section>
 
-    <footer style="padding: 50px 0; border-top: 1px solid var(--glass-border); text-align: center; color: var(--text-muted);">
-        <p>&copy; 2026 SkillSwap Platform. All rights reserved.</p>
+    <footer style="padding: 60px 0; border-top: 1px solid var(--glass-border); text-align: center; background: rgba(0,0,0,0.2);">
+        <div class="container">
+            <a href="#" class="logo" style="font-size: 20px; margin-bottom: 20px; display: block;">SKILLSWAP</a>
+            <p style="color: var(--text-muted);">&copy; 2026 SkillSwap Platform. Built for the next generation of learners.</p>
+        </div>
     </footer>
+
+    <script src="assets/js/animations.js"></script>
 </body>
 </html>
