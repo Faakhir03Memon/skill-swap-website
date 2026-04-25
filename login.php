@@ -61,7 +61,10 @@ body { display:flex; align-items:center; justify-content:center; min-height:100v
         </div>
       </div>
       <div class="form-group">
-        <label>Password</label>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px">
+          <label style="margin-bottom:0">Password</label>
+          <a href="forgot_password.php" style="font-size:12px; color:var(--primary-light); text-decoration:none; font-weight:600">Forgot Password?</a>
+        </div>
         <div style="position:relative">
           <i class="fas fa-lock" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--text-muted);font-size:14px"></i>
           <input type="password" name="password" id="pwd" class="form-control" placeholder="Enter your password" style="padding-left:42px;padding-right:42px" required>
