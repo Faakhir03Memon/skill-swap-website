@@ -17,6 +17,15 @@ if (isset($_GET['approve_id'])) {
     exit;
 }
 
+// Handle Reject action
+if (isset($_GET['reject_id'])) {
+    $reject_id = (int)$_GET['reject_id'];
+    $stmt = $pdo->prepare("DELETE FROM users WHERE id = ?");
+    $stmt->execute([$reject_id]);
+    header("Location: dashboard.php?msg=rejected");
+    exit;
+}
+
 // Fetch Stats
 $total_users = $pdo->query("SELECT COUNT(*) FROM users WHERE role = 'student'")->fetchColumn();
 $total_skills = $pdo->query("SELECT COUNT(*) FROM skills")->fetchColumn();
@@ -84,6 +93,62 @@ $recent_users = $pdo->query("SELECT * FROM users WHERE role = 'student' AND is_a
                 </div>
             </div>
 
+            <?php if(isset($_GET['msg']) && $_GET['msg'] == 'approved'): ?>
+                <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); color: #10b981; padding: 15px 20px; border-radius: 12px; margin-top: 30px; font-weight: 600;">
+                    <i class="fas fa-check-circle" style="margin-right: 8px;"></i> User payment approved successfully!
+                </div>
+            <?php endif; ?>
+            <?php if(isset($_GET['msg']) && $_GET['msg'] == 'rejected'): ?>
+                <div style="background: rgba(244, 63, 94, 0.1); border: 1px solid rgba(244, 63, 94, 0.3); color: #f43f5e; padding: 15px 20px; border-radius: 12px; margin-top: 30px; font-weight: 600;">
+                    <i class="fas fa-times-circle" style="margin-right: 8px;"></i> User rejected and removed.
+                </div>
+            <?php endif; ?>
+
+            <!-- PENDING APPROVALS SECTION -->
+            <div class="glass" style="margin-top: 40px; padding: 30px; border-left: 4px solid var(--warning);">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h3 style="margin: 0; color: var(--warning);"><i class="fas fa-clock" style="margin-right: 10px;"></i> Pending Payment Approvals</h3>
+                    <span style="background: rgba(245, 158, 11, 0.15); color: var(--warning); padding: 4px 12px; border-radius: 20px; font-size: 13px; font-weight: 700;"><?php echo count($pending_users); ?> Pending</span>
+                </div>
+                
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>User Details</th>
+                            <th>Plan</th>
+                            <th>Payment Method</th>
+                            <th>Transaction ID</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach($pending_users as $p_user): ?>
+                        <tr>
+                            <td>
+                                <strong><?php echo htmlspecialchars($p_user['name']); ?></strong><br>
+                                <span style="font-size: 12px; color: var(--text-muted);"><?php echo htmlspecialchars($p_user['email']); ?></span>
+                            </td>
+                            <td><span style="background: rgba(255,255,255,0.1); padding: 4px 8px; border-radius: 6px; font-size: 13px;"><?php echo $p_user['subscription_plan']; ?> Rs</span></td>
+                            <td><strong style="color: var(--primary-bright);"><?php echo htmlspecialchars($p_user['payment_method']); ?></strong></td>
+                            <td style="font-family: monospace; font-size: 15px; letter-spacing: 1px; color: #10b981; font-weight: bold;"><?php echo htmlspecialchars($p_user['transaction_id']); ?></td>
+                            <td>
+                                <div style="display: flex; gap: 8px;">
+                                    <a href="dashboard.php?approve_id=<?php echo $p_user['id']; ?>" class="btn btn-primary" style="padding: 6px 12px; font-size: 12px; background: #10b981; border-color: #10b981;">
+                                        <i class="fas fa-check"></i> Accept
+                                    </a>
+                                    <a href="dashboard.php?reject_id=<?php echo $p_user['id']; ?>" class="btn btn-primary" style="padding: 6px 12px; font-size: 12px; background: #f43f5e; border-color: #f43f5e;" onclick="return confirm('Are you sure you want to reject and delete this user?');">
+                                        <i class="fas fa-times"></i> Reject
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        <?php endforeach; ?>
+                        <?php if(empty($pending_users)): ?>
+                            <tr><td colspan="5" style="text-align: center; padding: 30px; color: var(--text-muted);">No pending payments to review.</td></tr>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
+            </div>
             <div class="glass" style="margin-top: 40px; padding: 30px;">
                 <h3 style="margin-bottom: 20px;">Recently Joined Students</h3>
                 <table class="data-table">
