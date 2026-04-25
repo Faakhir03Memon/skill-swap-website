@@ -37,7 +37,7 @@ function sendResetEmail($to_email, $reset_link) {
         // PUT YOUR GMAIL AND APP PASSWORD HERE
         // ==========================================
         $mail->Username   = 'info.skillswapp@gmail.com'; // Your Gmail
-        $mail->Password   = 'YOUR_APP_PASSWORD_HERE';    // Your Gmail App Password
+        $mail->Password   = 'lstgqyrxfkwvvvfn';    // Your Gmail App Password
         // ==========================================
         $mail->SMTPSecure = PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_STARTTLS;
         $mail->Port       = 587;
